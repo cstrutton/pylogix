@@ -151,13 +151,13 @@ class PLC(object):
         """
         return self._get_plc_time(raw)
 
-    def SetPLCTime(self):
+    def SetPLCTime(self, t=None):
         """
         Sets the controller clock time
 
         returns Response class (.TagName, .Value, .Status)
         """
-        return self._set_plc_time()
+        return self._set_plc_time(t)
 
     def GetTagList(self, allTags=True):
         """
@@ -675,7 +675,7 @@ class PLC(object):
 
         return Response(None, value, status)
 
-    def _set_plc_time(self):
+    def _set_plc_time(self, time_to_set):
         """
         Requests the PLC clock time
         """
@@ -691,7 +691,7 @@ class PLC(object):
         cip_instance = 0x01
         cip_count = 0x02
         cip_attribute = 0x06
-        t = int(time.time() * 1000000)
+        time_to_set if time_to_set else int(time.time() * 1000000)
         cip_dst_attribute = 0x0a
         request = pack('<BBBBBBHHQHB',
                        cip_service,
