@@ -151,13 +151,14 @@ class PLC(object):
         """
         return self._get_plc_time(raw)
 
-    def SetPLCTime(self):
+    def SetPLCTime(self, time_ms):
         """
         Sets the controller clock time
+        if time_ms is not specified, sets to the local clock
 
         returns Response class (.TagName, .Value, .Status)
         """
-        return self._set_plc_time()
+        return self._set_plc_time(time_ms)
 
     def GetTagList(self, allTags=True):
         """
@@ -675,9 +676,9 @@ class PLC(object):
 
         return Response(None, value, status)
 
-    def _set_plc_time(self):
+    def _set_plc_time(self, time_ms):
         """
-        Requests the PLC clock time
+        Sets the PLC clock time
         """
         conn = self.conn.connect()
         if not conn[0]:
@@ -691,7 +692,7 @@ class PLC(object):
         cip_instance = 0x01
         cip_count = 0x02
         cip_attribute = 0x06
-        t = int(time.time() * 1000000)
+        t = time_ms if time_ms else int(time.time() * 1000000)
         cip_dst_attribute = 0x0a
         request = pack('<BBBBBBHHQHB',
                        cip_service,
